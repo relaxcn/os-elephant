@@ -121,7 +121,7 @@ loader_start:
     jmp $
 
 
-.open_a20
+.open_a20:
     ; enter protect mode
     ; open a20
     in al, 0x92

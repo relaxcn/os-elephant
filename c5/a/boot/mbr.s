@@ -34,6 +34,7 @@ SECTION MBR vstart=0x7c00
 
     mov eax, LOADER_START_SECTOR
     mov bx, LOADER_BASE_ADDR
+    ; read 4 blok 512 byte
     mov cx, 4
     call rd_disk_m_16
 
