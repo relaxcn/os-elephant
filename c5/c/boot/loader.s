@@ -180,7 +180,12 @@ p_mode_start:
 
     mov byte [gs:160], 'V'
 
-    jmp $
+    jmp SELECTOR_CODE:enter_kernel
+    
+enter_kernel:
+    call kernel_init
+    mov esp, 0xc009f000
+    jmp KERNEL_ENTRY_POINT
 
 
 ; ------ create page index and page
@@ -339,7 +344,7 @@ mem_cpy:
 
     mov edi, [ebp + 8] ; dst
     mov esi, [ebp + 12] ; src
-    mov ecx, [ebp + 16] ; size
+    mov ecx, [ebp + 16] ; size, also is the rep count
     rep movsb
 
     ; recovery environment
