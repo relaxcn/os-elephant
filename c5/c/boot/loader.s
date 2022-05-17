@@ -151,7 +151,7 @@ p_mode_start:
 
     ; loader kernel.bin
     mov eax, KERNEL_START_SECTOR
-    mov ebx, KERNEL_BASE_ADDR
+    mov ebx, KERNEL_BIN_BASE_ADDR
     ; loop count
     mov ecx, 200
     call rd_disk_m_32
@@ -183,6 +183,12 @@ p_mode_start:
     jmp SELECTOR_CODE:enter_kernel
     
 enter_kernel:
+    mov byte [gs:320], 'k'     ;视频段段基址已经被更新
+    mov byte [gs:322], 'e'     ;视频段段基址已经被更新
+    mov byte [gs:324], 'r'     ;视频段段基址已经被更新
+    mov byte [gs:326], 'n'     ;视频段段基址已经被更新
+    mov byte [gs:328], 'e'     ;视频段段基址已经被更新
+    mov byte [gs:330], 'l'     ;视频段段基址已经被更新
     call kernel_init
     mov esp, 0xc009f000
     jmp KERNEL_ENTRY_POINT
@@ -276,7 +282,7 @@ rd_disk_m_32:
     ; read command 
     mov dx, 0x1f7
     mov al, 0x20
-    out edx, al
+    out dx, al
 
 ; check disk status
 .not_ready:
@@ -295,8 +301,8 @@ rd_disk_m_32:
     mov dx, 0x1f0
 
 .go_on_read:
-    in eax, edx ; read 1 word- two bytes- 32 bits
-    mov [ebx], eax
+    in ax, dx ; read 1 word- two bytes- 32 bits
+    mov [ebx], ax
     add ebx, 2
     loop .go_on_read
     ret
@@ -316,7 +322,7 @@ kernel_init:
     mov cx, [KERNEL_BIN_BASE_ADDR + 44] ; this is show the number of program header
 
 .each_segment:
-    cmp byte [ebx + 0], PT_NULL
+    cmp byte [ebx + 0], .PT_NULL
     je .PT_NULL
 
     ; push memcpy function's parments
